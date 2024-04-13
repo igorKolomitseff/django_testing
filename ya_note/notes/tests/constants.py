@@ -4,7 +4,7 @@ from django.urls import reverse
 SLUG = 'test'
 
 
-class ConstantsUrls():
+class UrlsConstants():
     HOMEPAGE_URL = reverse('notes:home')
     LOGIN_URL = reverse('users:login')
     LOGOUT_URL = reverse('users:logout')
