@@ -281,7 +281,7 @@ class NoteEditDeleteNote(TestCase):
         response = self.authenticated_client.delete(self.delete_url)
         self.assertEqual(
             response.status_code,
-            HTTPStatus.OK,
+            HTTPStatus.NOT_FOUND,
             (
                 'Убедитесь, что аутентифицированному пользователю недоступна '
                 'страница удаления чужой заметки.'
