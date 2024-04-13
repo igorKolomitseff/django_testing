@@ -10,8 +10,7 @@ from news.forms import CommentForm
 def test_news_count(client, home_url):
     response = client.get(home_url)
     object_list = response.context['object_list']
-    news_count = object_list.count()
-    assert news_count == settings.NEWS_COUNT_ON_HOME_PAGE, (
+    assert object_list.count() == settings.NEWS_COUNT_ON_HOME_PAGE, (
         f'Убедитесь, что количество новостей на главной странице — '
         f'не более {settings.NEWS_COUNT_ON_HOME_PAGE}.'
     )

@@ -10,6 +10,20 @@ from notes.models import Note
 User = get_user_model()
 
 
+NAMES_PAGES = {
+    'home': ('notes:home', 'главная'),
+    'login': ('users:login', 'входа в учётную запись'),
+    'logout': ('users:logout', 'выхода из учётной записи'),
+    'signup': ('users:signup', 'регистрации'),
+    'add': ('notes:add', 'добавления новой заметки'),
+    'list': ('notes:list', 'со списком заметок'),
+    'success': ('notes:success', 'успешного добавления/удаления заметки'),
+    'detail': ('notes:detail', 'отдельной заметки'),
+    'edit': ('notes:edit', 'редактирования заметки'),
+    'delete': ('notes:delete', 'удаления заметки')
+}
+
+
 class TestRoutes(TestCase):
 
     @classmethod
@@ -28,13 +42,14 @@ class TestRoutes(TestCase):
             slug='test',
             author=cls.author
         )
+        cls.login_url = reverse('users:login')
 
     def test_pages_availability_for_anonymous_user(self):
         for name, page_name in (
-            ('notes:home', 'главная'),
-            ('users:login', 'входа в учётную запись'),
-            ('users:logout', 'выхода из учётной записи'),
-            ('users:signup', 'регистрации'),
+            NAMES_PAGES['home'],
+            NAMES_PAGES['login'],
+            NAMES_PAGES['logout'],
+            NAMES_PAGES['signup'],
         ):
             with self.subTest(name=name):
                 response = self.client.get(reverse(name))
@@ -49,9 +64,9 @@ class TestRoutes(TestCase):
 
     def test_pages_availability_for_authenticated_user(self):
         for name, page_name in (
-            ('notes:add', 'добавления новой заметки'),
-            ('notes:list', 'со списком заметок'),
-            ('notes:success', 'успешного добавления/удаления заметки'),
+            NAMES_PAGES['add'],
+            NAMES_PAGES['list'],
+            NAMES_PAGES['success'],
         ):
             with self.subTest(name=name):
                 response = self.authenticated_client.get(reverse(name))
@@ -69,12 +84,13 @@ class TestRoutes(TestCase):
                 (self.author_client, HTTPStatus.OK,
                  'автору заметки', 'доступна'),
                 (self.authenticated_client, HTTPStatus.NOT_FOUND,
-                 'стороннему аутентифицированному пользователю', 'недоступна'),
+                 'стороннему авторизированному пользователю',
+                 'для чужой заметки недоступна'),
         ):
             for name, page_name in (
-                    ('notes:detail', 'отдельной заметки'),
-                    ('notes:edit', 'редактирования заметки'),
-                    ('notes:delete', 'удаления заметки'),
+                    NAMES_PAGES['detail'],
+                    NAMES_PAGES['edit'],
+                    NAMES_PAGES['delete'],
             ):
                 with self.subTest(client=client, name=name):
                     response = client.get(reverse(
@@ -90,23 +106,21 @@ class TestRoutes(TestCase):
                     )
 
     def test_redirect_for_anonymous_client(self):
-        login_url = reverse('users:login')
         slug = self.note.slug
         for name, page_name, args in (
-            ('notes:add', 'добавления новой заметки', None),
-            ('notes:list', 'со списком заметок', None),
-            ('notes:success', 'успешного добавления/удаления заметки', None),
-            ('notes:detail', 'отдельной заметки', (slug,)),
-            ('notes:edit', 'редактирования заметки', (slug,)),
-            ('notes:delete', 'удаления заметки', (slug,)),
+            (*NAMES_PAGES['add'], None),
+            (*NAMES_PAGES['list'], None),
+            (*NAMES_PAGES['success'], None),
+            (*NAMES_PAGES['detail'], (slug,)),
+            (*NAMES_PAGES['edit'], (slug,)),
+            (*NAMES_PAGES['delete'], (slug,)),
         ):
             with self.subTest(name=name):
                 url = reverse(name, args=args)
-                redirect_url = f'{login_url}?next={url}'
                 response = self.client.get(url)
                 self.assertRedirects(
                     response,
-                    redirect_url,
+                    f'{self.login_url}?next={url}',
                     msg_prefix=(
                         'Убедитесь, что при попытке перейти на страницу '
                         f'{page_name} анонимный пользователь перенаправляется '

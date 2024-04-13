@@ -23,7 +23,7 @@ from pytest_django.asserts import assertRedirects
 def test_pages_availability_for_anonymous_user(client, url, page_name):
     response = client.get(url)
     assert response.status_code == HTTPStatus.OK, (
-        f'Убедитесь, что {page_name} доступна для анонимного пользователя.'
+        f'Убедитесь, что {page_name} доступна анонимному пользователю.'
     )
 
 
@@ -33,7 +33,8 @@ def test_pages_availability_for_anonymous_user(client, url, page_name):
         (pytest.lazy_fixture('author_client'), HTTPStatus.OK,
          'автора комментария', 'доступна'),
         (pytest.lazy_fixture('reader_client'), HTTPStatus.NOT_FOUND,
-         'стороннего авторизированного пользователя', 'недоступна'),
+         'стороннего аутентифицированного пользователя',
+         'для чужого комментария недоступна'),
     ),
 )
 @pytest.mark.parametrize(
@@ -65,9 +66,8 @@ def test_availability_for_comment_edit_and_delete(
     )
 )
 def test_redirect_for_anonymous_client(client, login_url, url, page_name):
-    response = client.get(url)
     assertRedirects(
-        response,
+        client.get(url),
         f'{login_url}?next={url}',
         msg_prefix=(
             f'Убедитесь, что при попытке перейти на {page_name} '

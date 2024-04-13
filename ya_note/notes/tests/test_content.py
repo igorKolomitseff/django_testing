@@ -32,7 +32,8 @@ class TestContent(TestCase):
             (self.author_client, True,
              'автора заметки', 'заметка есть'),
             (self.authenticated_client, False,
-             'стороннего аутентифицированного пользователя', 'заметки нет')
+             'стороннего авторизированного пользователя',
+             'чужой заметки нет')
         ):
             with self.subTest(client=client):
                 response = client.get(reverse('notes:list'))
@@ -57,8 +58,8 @@ class TestContent(TestCase):
                     'form',
                     response.context,
                     (
-                        f'Убедитесь, что на странице {page_name} '
-                        'объект form есть в словаре контекста.'
+                        'Убедитесь, что объект form есть в словаре '
+                        f'контекста для страницы {page_name}.'
                     )
                 )
                 self.assertIsInstance(

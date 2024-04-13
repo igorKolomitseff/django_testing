@@ -24,16 +24,15 @@ class TestNoteCreation(TestCase):
             'text': 'Текст',
             'slug': 'test'
         }
+        cls.login_url = reverse('users:login')
         cls.add_url = reverse('notes:add')
         cls.success_url = reverse('notes:success')
 
     def test_anonymous_user_cant_create_note(self):
         response = self.client.post(self.add_url, data=self.form_data)
-        login_url = reverse('users:login')
-        expected_url = f'{login_url}?next={self.add_url}'
         self.assertRedirects(
             response,
-            expected_url,
+            f'{self.login_url}?next={self.add_url}',
             msg_prefix=(
                 'Убедитесь, что при попытке создать заметку анонимный '
                 'пользователь перенаправляется на страницу авторизации.'
@@ -49,10 +48,7 @@ class TestNoteCreation(TestCase):
         )
 
     def test_user_can_create_note(self):
-        response = self.author_client.post(
-            self.add_url,
-            data=self.form_data
-        )
+        response = self.author_client.post(self.add_url, data=self.form_data)
         self.assertRedirects(
             response,
             self.success_url,
@@ -65,7 +61,7 @@ class TestNoteCreation(TestCase):
             Note.objects.count(),
             1,
             (
-                'Убедитесь, что аутентифицированный пользователь может '
+                'Убедитесь, что авторизированный пользователь может '
                 'создать заметку.'
             )
         )
@@ -74,32 +70,33 @@ class TestNoteCreation(TestCase):
             new_note.title,
             self.form_data['title'],
             (
-                'Убедитесь, что данные поля title объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после создания заметки данные поля title '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
         self.assertEqual(
             new_note.text,
             self.form_data['text'],
             (
-                'Убедитесь, что данные поля text объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после создания заметки данные поля text '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
         self.assertEqual(
             new_note.slug,
             self.form_data['slug'],
             (
-                'Убедитесь, что данные поля slug объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после создания заметки данные поля slug '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
         self.assertEqual(
             new_note.author,
             self.author,
             (
-                'Убедитесь, что данные поля author объекта заметки '
-                'соответствуют объекту авторизированного пользователя.'
+                'Убедитесь, что после создания заметки данные поля author '
+                'объекта заметки соответствуют объекту авторизированного '
+                'пользователя.'
             )
         )
 
@@ -122,7 +119,7 @@ class TestNoteCreation(TestCase):
             1,
             (
                 'Убедитесь, что невозможно создать две заметки '
-                'с одинаковым slug.'
+                'с одинаковым полем slug.'
             )
         )
 
@@ -151,12 +148,12 @@ class TestNoteCreation(TestCase):
             (
                 'Убедитесь, что если при создании заметки не заполнен slug, '
                 'то он формируется автоматически, с помощью функции '
-                'pytils.translit.slugify.'
+                'slugify.'
             )
         )
 
 
-class NoteEditDelete(TestCase):
+class NoteEditDeleteNote(TestCase):
 
     @classmethod
     def setUpTestData(cls):
@@ -198,24 +195,24 @@ class NoteEditDelete(TestCase):
             self.note.title,
             self.form_data['title'],
             (
-                'Убедитесь, что данные поля title объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после изменения заметки данные поля title '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
         self.assertEqual(
             self.note.text,
             self.form_data['text'],
             (
-                'Убедитесь, что данные поля text объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после изменения заметки данные поля text '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
         self.assertEqual(
             self.note.slug,
             self.form_data['slug'],
             (
-                'Убедитесь, что данные поля slug объекта заметки '
-                'соответствуют данным из формы.'
+                'Убедитесь, что после изменения заметки данные поля slug '
+                'объекта заметки соответствуют данным из формы.'
             )
         )
 
@@ -228,7 +225,7 @@ class NoteEditDelete(TestCase):
             response.status_code,
             HTTPStatus.NOT_FOUND,
             (
-                'Убедитесь, что авторизированному пользователю недоступна '
+                'Убедитесь, что аутентифицированному пользователю недоступна '
                 'страница редактирования чужой записи.'
             )
         )
@@ -237,24 +234,27 @@ class NoteEditDelete(TestCase):
             self.note.title,
             note_from_db.title,
             (
-                'Убедитесь, что данные поля title объекта заметки '
-                'не изменилось.'
+                'Убедитесь, что при попытке аутентифицированного пользователя '
+                'изменить чужую заметку данные поля title объекта заметки '
+                'не изменились.'
             )
         )
         self.assertEqual(
             self.note.text,
             note_from_db.text,
             (
-                'Убедитесь, что данные поля text объекта заметки '
-                'не изменилось.'
+                'Убедитесь, что при попытке аутентифицированного пользователя '
+                'изменить чужую заметку данные поля text объекта заметки '
+                'не изменились.'
             )
         )
         self.assertEqual(
             self.note.slug,
             note_from_db.slug,
             (
-                'Убедитесь, что данные поля slug объекта заметки '
-                'не изменилось.'
+                'Убедитесь, что при попытке аутентифицированного пользователя '
+                'изменить чужую заметку данные поля slug объекта заметки '
+                'не изменились.'
             )
         )
 
@@ -264,7 +264,7 @@ class NoteEditDelete(TestCase):
             response,
             self.success_url,
             msg_prefix=(
-                'Убедитесь, что после изменения заметки её автор '
+                'Убедитесь, что после удаления заметки её автор '
                 'перенаправляется на страницу успешного удаления заметки.'
             )
         )
@@ -281,17 +281,17 @@ class NoteEditDelete(TestCase):
         response = self.authenticated_client.delete(self.delete_url)
         self.assertEqual(
             response.status_code,
-            HTTPStatus.NOT_FOUND,
+            HTTPStatus.OK,
             (
-                'Убедитесь, что авторизированному пользователю недоступна '
-                'страница удаления чужой записи.'
+                'Убедитесь, что аутентифицированному пользователю недоступна '
+                'страница удаления чужой заметки.'
             )
         )
         self.assertEqual(
             Note.objects.count(),
             1,
             (
-                'Убедитесь, что авторизированный пользователь не может '
+                'Убедитесь, что аутентифицированный пользователь не может '
                 'удалить чужую заметку.'
             )
         )
