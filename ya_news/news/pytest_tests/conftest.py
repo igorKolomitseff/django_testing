@@ -6,8 +6,8 @@ from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
 
-from news.models import Comment, News
 from news.forms import BAD_WORDS
+from news.models import Comment, News
 
 
 @pytest.fixture

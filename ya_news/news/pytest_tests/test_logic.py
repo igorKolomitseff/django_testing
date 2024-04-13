@@ -3,8 +3,8 @@ import pytest
 
 from pytest_django.asserts import assertRedirects, assertFormError
 
-from news.models import Comment
 from news.forms import WARNING
+from news.models import Comment
 
 
 @pytest.mark.django_db
