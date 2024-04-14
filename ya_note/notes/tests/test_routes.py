@@ -7,8 +7,8 @@ from .set_up_test_data import TestData
 class TestRoutes(TestData):
 
     @classmethod
-    def setUpTestData(cls, create_single_note=False):
-        super().setUpTestData(create_single_note=True)
+    def setUpTestData(cls, create_forms_data=False):
+        super().setUpTestData()
 
     def test_pages_availability(self):
         for url, client, status in (
@@ -58,17 +58,17 @@ class TestRoutes(TestData):
     def test_redirect_for_anonymous_user(self):
         for url, redirect in (
             (UrlsConstants.NOTE_ADD_URL,
-             UrlsConstants.REDIRECT_TO_NOTE_ADD_URL),
+             UrlsConstants.REDIRECT_FROM_NOTE_ADD_TO_LOGIN_URL),
             (UrlsConstants.NOTES_LIST_URL,
-             UrlsConstants.REDIRECT_TO_NOTES_LIST_URL),
+             UrlsConstants.REDIRECT_FROM_NOTES_LIST_TO_LOGIN_URL),
             (UrlsConstants.SUCCESS_URL,
-             UrlsConstants.REDIRECT_TO_SUCCESS_URL),
+             UrlsConstants.REDIRECT_FROM_SUCCESS_TO_LOGIN_URL),
             (UrlsConstants.NOTE_DETAIL_URL,
-             UrlsConstants.REDIRECT_TO_NOTE_DETAIL_URL),
+             UrlsConstants.REDIRECT_FROM_NOTE_DETAIL_TO_LOGIN_URL),
             (UrlsConstants.NOTE_EDIT_URL,
-             UrlsConstants.REDIRECT_TO_NOTE_EDIT_URL),
+             UrlsConstants.REDIRECT_FROM_NOTE_EDIT_TO_LOGIN_URL),
             (UrlsConstants.NOTE_DELETE_URL,
-             UrlsConstants.REDIRECT_TO_NOTE_DELETE_URL)
+             UrlsConstants.REDIRECT_FROM_NOTE_DELETE_TO_LOGIN_URL)
         ):
             with self.subTest(url=url, redirect=redirect):
                 self.assertRedirects(self.client.get(url), redirect)

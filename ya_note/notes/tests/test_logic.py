@@ -21,7 +21,7 @@ class TestLogic(TestData):
                 UrlsConstants.NOTE_ADD_URL,
                 data=self.create_note_form_data
             ),
-            UrlsConstants.REDIRECT_TO_NOTE_ADD_URL,
+            UrlsConstants.REDIRECT_FROM_NOTE_ADD_TO_LOGIN_URL,
         )
         self.assertEqual(
             Note.objects.count(),
