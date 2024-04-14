@@ -11,7 +11,7 @@ User = get_user_model()
 class TestData(TestCase):
 
     @classmethod
-    def setUpTestData(cls, create_single_note=False):
+    def setUpTestData(cls, create_forms_data=False):
         cls.author = User.objects.create(username='Author')
         cls.author_client = Client()
         cls.author_client.force_login(cls.author)
@@ -20,10 +20,20 @@ class TestData(TestCase):
         )
         cls.authenticated_client = Client()
         cls.authenticated_client.force_login(cls.authenticated_user)
-        if create_single_note:
-            cls.note = Note.objects.create(
-                title='Заголовок',
-                text='Текст',
-                slug=SLUG,
-                author=cls.author
-            )
+        cls.note = Note.objects.create(
+            title='Заголовок',
+            text='Текст',
+            slug=SLUG,
+            author=cls.author
+        )
+        if create_forms_data:
+            cls.create_note_form_data = {
+                'title': 'Новый заголовок',
+                'text': 'Новый текст',
+                'slug': 'new_note'
+            }
+            cls.edit_note_form_data = {
+                'title': 'Изменённый заголовок',
+                'text': 'Изменённый текст',
+                'slug': 'edit_note'
+            }
