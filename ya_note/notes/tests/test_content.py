@@ -1,15 +1,14 @@
-from .constants import UrlsConstants
-from .set_up_test_data import TestData
-
 from notes.forms import NoteForm
 from notes.models import Note
+from .constants import UrlsConstants
+from .set_up_test_data import TestData
 
 
 class TestContent(TestData):
 
     @classmethod
-    def setUpTestData(cls, create_single_note=False):
-        super().setUpTestData(create_single_note=True)
+    def setUpTestData(cls, create_forms_data=False):
+        super().setUpTestData()
 
     def test_notes_list(self):
         self.assertIn(
