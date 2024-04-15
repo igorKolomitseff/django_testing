@@ -1,6 +1,5 @@
 from .configuration import TestData, Urls
 from notes.forms import NoteForm
-from notes.models import Note
 
 
 class TestContent(TestData):
