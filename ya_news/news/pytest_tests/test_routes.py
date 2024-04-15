@@ -17,11 +17,11 @@ AUTHOR_CLIENT = pytest.lazy_fixture('author_client')
 READER_CLIENT = pytest.lazy_fixture('reader_client')
 
 REDIRECT_FROM_LOGIN_URL_TO_COMMENT_EDIT_URL = pytest.lazy_fixture(
-        'redirect_from_login_to_comment_edit_url'
-    )
+    'redirect_from_login_to_comment_edit_url'
+)
 REDIRECT_FROM_LOGIN_URL_TO_COMMENT_DELETE_URL = pytest.lazy_fixture(
-        'redirect_from_login_to_comment_delete_url'
-    )
+    'redirect_from_login_to_comment_delete_url'
+)
 
 pytestmark = pytest.mark.django_db
 
