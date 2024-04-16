@@ -14,12 +14,15 @@ class TestRoutes(TestData):
             (Urls.NOTE_ADD_URL, self.user_client, HTTPStatus.OK),
             (Urls.NOTES_LIST_URL, self.user_client, HTTPStatus.OK),
             (Urls.SUCCESS_URL, self.user_client, HTTPStatus.OK),
-            (Urls.NOTE_DETAIL_URL, self.author_client, HTTPStatus.OK),
-            (Urls.NOTE_EDIT_URL, self.author_client, HTTPStatus.OK),
-            (Urls.NOTE_DELETE_URL, self.author_client, HTTPStatus.OK),
             (Urls.NOTE_DETAIL_URL, self.user_client, HTTPStatus.NOT_FOUND),
             (Urls.NOTE_EDIT_URL, self.user_client, HTTPStatus.NOT_FOUND),
-            (Urls.NOTE_DELETE_URL, self.user_client, HTTPStatus.NOT_FOUND)
+            (Urls.NOTE_DELETE_URL, self.user_client, HTTPStatus.NOT_FOUND),
+            (Urls.NOTE_ADD_URL, self.author_client, HTTPStatus.OK),
+            (Urls.NOTES_LIST_URL, self.author_client, HTTPStatus.OK),
+            (Urls.SUCCESS_URL, self.author_client, HTTPStatus.OK),
+            (Urls.NOTE_DETAIL_URL, self.author_client, HTTPStatus.OK),
+            (Urls.NOTE_EDIT_URL, self.author_client, HTTPStatus.OK),
+            (Urls.NOTE_DELETE_URL, self.author_client, HTTPStatus.OK)
         ):
             with self.subTest(url=url, client=client, status=status):
                 self.assertEqual(client.get(url).status_code, status)
