@@ -45,7 +45,7 @@ class Urls:
 class TestData(TestCase):
 
     @classmethod
-    def setUpTestData(cls, create_forms_data=False):
+    def setUpTestData(cls):
         cls.author = User.objects.create(username='Author')
         cls.author_client = Client()
         cls.author_client.force_login(cls.author)
@@ -58,14 +58,13 @@ class TestData(TestCase):
             slug=SLUG,
             author=cls.author
         )
-        if create_forms_data:
-            cls.create_note_form_data = {
-                'title': 'Новый заголовок',
-                'text': 'Новый текст',
-                'slug': 'new_note'
-            }
-            cls.edit_note_form_data = {
-                'title': 'Изменённый заголовок',
-                'text': 'Изменённый текст',
-                'slug': 'edit_note'
-            }
+        cls.create_note_form_data = {
+            'title': 'Новый заголовок',
+            'text': 'Новый текст',
+            'slug': 'new_note'
+        }
+        cls.edit_note_form_data = {
+            'title': 'Изменённый заголовок',
+            'text': 'Изменённый текст',
+            'slug': 'edit_note'
+        }
