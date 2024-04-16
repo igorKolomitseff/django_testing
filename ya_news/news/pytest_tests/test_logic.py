@@ -75,17 +75,17 @@ def test_author_can_edit_comment(
 
 
 def test_user_cant_edit_comment_of_another_user(
-    reader_client, comment_edit_url, comment, news, author
+    reader_client, comment_edit_url, comment
 ):
-    expected_text = comment.text
     response = reader_client.post(
         comment_edit_url,
         data=EDIT_COMMENT_FORM_DATA
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert comment.text == expected_text
-    assert comment.news == news
-    assert comment.author == author
+    comment_from_db = Comment.objects.get(id=comment.id)
+    assert comment_from_db.text == comment.text
+    assert comment_from_db.news == comment.news
+    assert comment_from_db.author == comment.author
 
 
 def test_author_can_delete_comment(
