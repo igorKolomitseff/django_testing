@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from pytest_django.asserts import assertRedirects
 import pytest
+from pytest_django.asserts import assertRedirects
 
 
 HOMEPAGE_URL = pytest.lazy_fixture('homepage_url')

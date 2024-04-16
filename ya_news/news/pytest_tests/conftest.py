@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from django.test.client import Client
 import pytest
+from django.test.client import Client
 from django.urls import reverse
 from django.conf import settings
 from django.utils import timezone
