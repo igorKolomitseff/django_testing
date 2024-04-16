@@ -9,7 +9,7 @@ class TestContent(TestData):
             Urls.NOTES_LIST_URL
         ).context.get('object_list')
         self.assertIn(self.note, notes)
-        note = notes[0]
+        note = notes.get(id=self.note.id)
         self.assertEqual(note.title, self.note.title)
         self.assertEqual(note.text, self.note.text)
         self.assertEqual(note.slug, self.note.slug)
