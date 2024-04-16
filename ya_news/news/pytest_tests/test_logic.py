@@ -24,24 +24,24 @@ def get_bad_words_data(bad_word):
 
 
 def test_anonymous_user_cant_create_comment(client, news_detail_url):
-    initial_comments = set(Comment.objects.all())
+    comments = set(Comment.objects.all())
     client.post(news_detail_url, data=CREATE_COMMENT_FORM_DATA)
-    assert set(Comment.objects.all()) == initial_comments
+    assert set(Comment.objects.all()) == comments
 
 
 def test_user_can_create_comment(
     author_client, news, author, news_detail_url, redirect_to_comments_url
 ):
-    initial_comments = set(Comment.objects.all())
+    comments = set(Comment.objects.all())
     assertRedirects(
         author_client.post(news_detail_url, data=CREATE_COMMENT_FORM_DATA),
         redirect_to_comments_url)
-    changing_db = set(Comment.objects.all()) - initial_comments
-    assert len(changing_db) == 1
-    new_comment = changing_db.pop()
-    assert new_comment.text == CREATE_COMMENT_FORM_DATA['text']
-    assert new_comment.news == news
-    assert new_comment.author == author
+    comments = set(Comment.objects.all()) - comments
+    assert len(comments) == 1
+    comment = comments.pop()
+    assert comment.text == CREATE_COMMENT_FORM_DATA['text']
+    assert comment.news == news
+    assert comment.author == author
 
 
 @pytest.mark.parametrize(
@@ -51,14 +51,14 @@ def test_user_can_create_comment(
 def test_user_cant_use_bad_words(
     author_client, news_detail_url, bad_word
 ):
-    initial_comments = set(Comment.objects.all())
+    comments = set(Comment.objects.all())
     assertFormError(
         author_client.post(news_detail_url, data=get_bad_words_data(bad_word)),
         form='form',
         field='text',
         errors=WARNING
     )
-    assert set(Comment.objects.all()) == initial_comments
+    assert set(Comment.objects.all()) == comments
 
 
 def test_author_can_edit_comment(
@@ -89,20 +89,25 @@ def test_user_cant_edit_comment_of_another_user(
 
 
 def test_author_can_delete_comment(
-    author_client, comment_delete_url, redirect_to_comments_url
+    author_client, comment_delete_url, redirect_to_comments_url, comment
 ):
-    initial_number_of_comments = Comment.objects.count()
+    number_of_comments = Comment.objects.count()
     assertRedirects(
         author_client.delete(comment_delete_url),
         redirect_to_comments_url
     )
-    assert Comment.objects.count() == initial_number_of_comments - 1
+    assert Comment.objects.count() == number_of_comments - 1
+    assert not Comment.objects.filter(id=comment.id).exists()
 
 
 def test_user_cant_delete_comment_of_another_user(
-    reader_client, comment_delete_url
+    reader_client, comment_delete_url, comment
 ):
-    initial_comments = set(Comment.objects.all())
+    comments = set(Comment.objects.all())
     response = reader_client.delete(comment_delete_url)
     assert response.status_code == HTTPStatus.NOT_FOUND
-    assert set(Comment.objects.all()) == initial_comments
+    assert set(Comment.objects.all()) == comments
+    comment_from_db = Comment.objects.get(id=comment.id)
+    assert comment_from_db.text == comment.text
+    assert comment_from_db.news == comment.news
+    assert comment_from_db.author == comment.author
